@@ -1,4 +1,4 @@
-package com.example.memeart;
+package com.indiedev91.memeart;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
-import com.indiedev91.memeart.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;

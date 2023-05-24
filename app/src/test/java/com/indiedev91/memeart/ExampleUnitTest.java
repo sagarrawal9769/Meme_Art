@@ -1,4 +1,4 @@
-package com.example.memeart;
+package com.indiedev91.memeart;
 
 import org.junit.Test;
 
