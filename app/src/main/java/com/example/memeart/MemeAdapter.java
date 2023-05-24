@@ -27,6 +27,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 import com.google.android.material.button.MaterialButton;
+import com.indiedev91.memeart.R;
 
 import org.jetbrains.annotations.NotNull;
 

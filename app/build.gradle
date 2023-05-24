@@ -7,7 +7,7 @@ android {
     buildToolsVersion "31.0.0"
 
     defaultConfig {
-        applicationId "com.example.memeart"
+        applicationId "com.indiedev91.memeart"
         minSdkVersion 19
         targetSdkVersion 31
         versionCode 1
