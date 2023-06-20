@@ -129,6 +129,13 @@ public class MemeAdapter_Art extends RecyclerView.Adapter<MemeAdapter_Art.MemeVi
         return memeList.size();
     }
 
+    @Override
+    public void onViewDetachedFromWindow(@NonNull MemeViewHolder holder) {
+        super.onViewDetachedFromWindow(holder);
+        // Unregister the shared preferences listener
+
+
+    }
 
     public class YourClass {
         private boolean isNetworkConnected(Context context) {
@@ -189,14 +196,6 @@ public class MemeAdapter_Art extends RecyclerView.Adapter<MemeAdapter_Art.MemeVi
             }
         }
     }
-    @Override
-    public void onViewDetachedFromWindow(@NonNull MemeViewHolder holder) {
-        super.onViewDetachedFromWindow(holder);
-        // Unregister the shared preferences listener
-        holder.unregisterSharedPrefsListener_art();
-
-    }
-
 
     public class MemeViewHolder extends RecyclerView.ViewHolder {
         TextView memeTextView;
@@ -205,22 +204,6 @@ public class MemeAdapter_Art extends RecyclerView.Adapter<MemeAdapter_Art.MemeVi
         MaterialButton adBtn;
         CardView adSpace;
         YourClass yourClass = new YourClass();
-        // Define the listener for shared preferences changes
-        SharedPreferences.OnSharedPreferenceChangeListener sharedPrefsListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-            @Override
-            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                if (key.equals(REWARD_GRANTED_KEY)) {
-                    boolean rewardGranted = sharedPreferences.getBoolean(key, false);
-                    if (rewardGranted) {
-                        adBtn.setVisibility(View.GONE);
-                        adSpace.setVisibility(View.VISIBLE);
-                    } else {
-                        adBtn.setVisibility(View.VISIBLE);
-                        adSpace.setVisibility(View.GONE);
-                    }
-                }
-            }
-        };
 
         public MemeViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -231,15 +214,6 @@ public class MemeAdapter_Art extends RecyclerView.Adapter<MemeAdapter_Art.MemeVi
             View root = binding.requireActivity().getWindow().getDecorView().getRootView();
             adBtn = root.findViewById(R.id.watchAdBtn);
             adSpace = root.findViewById(R.id.adSpace);
-            if (mSharedPrefs.getBoolean(REWARD_GRANTED_KEY, false)) {
-                adBtn.setVisibility(View.GONE);
-                adSpace.setVisibility(View.VISIBLE);
-
-            } else {
-                adBtn.setVisibility(View.VISIBLE);
-                adSpace.setVisibility(View.GONE);
-            }
-            mSharedPrefs.registerOnSharedPreferenceChangeListener(sharedPrefsListener);
             adBtn.setOnClickListener(view -> {
                 if (yourClass.isNetworkConnected(context)) {
                     adBtn.setVisibility(View.GONE);
@@ -336,40 +310,6 @@ public class MemeAdapter_Art extends RecyclerView.Adapter<MemeAdapter_Art.MemeVi
 
         }
 
-        public void unregisterSharedPrefsListener_art() {
-            // Unregister the shared preferences listener
-            mSharedPrefs.unregisterOnSharedPreferenceChangeListener(sharedPrefsListener);
-        }
-        // Call this method to start updating the visibility periodically
-        private void startVisibilityUpdate() {
-            Handler handler = new Handler();
-            Runnable runnable = new Runnable() {
-                @Override
-                public void run() {
-                    // Update visibility based on the current value in shared preferences
-                    boolean rewardGranted = mSharedPrefs.getBoolean(REWARD_GRANTED_KEY, false);
-                    if (rewardGranted) {
-                        adBtn.setVisibility(View.GONE);
-                        adSpace.setVisibility(View.VISIBLE);
-                    } else {
-                        adBtn.setVisibility(View.VISIBLE);
-                        adSpace.setVisibility(View.GONE);
-                    }
-
-                    // Schedule the next update after a delay (adjust the duration as needed)
-                    handler.postDelayed(this, 1000);
-                }
-            };
-
-            // Start the periodic update by posting the runnable to the handler
-            handler.post(runnable);
-        }
-
-        // Call this method to stop updating the visibility periodically
-        private void stopVisibilityUpdate() {
-            Handler handler = new Handler();
-            handler.removeCallbacksAndMessages(null);
-        }
 
 
     }
