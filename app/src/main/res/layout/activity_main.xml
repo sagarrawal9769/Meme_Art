@@ -39,64 +39,27 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end"
-                    android:contentDescription="TODO"
+                    android:contentDescription="@string/todo"
                     android:onClick="showInfoCard"
                     android:padding="8dp"
                     android:src="@drawable/ic_baseline_info_24" />
             </androidx.appcompat.widget.Toolbar>
 
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tabLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/cardview_dark_background"/>
+
         </com.google.android.material.appbar.AppBarLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/adSpace"
-            android:layout_below="@+id/appBarLayout"
-            android:layerType="hardware" />
-
-
-
-        <androidx.cardview.widget.CardView
-            android:id="@+id/adSpace"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:backgroundTint="@color/cardview_dark_background"
-            android:minHeight="70dp"
-            tools:targetApi="lollipop">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/ad_space"
-                android:textAlignment="center"
-                android:textColor="@color/white"
-                android:textSize="20sp" />
-
-            <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/adView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                ads:adSize="BANNER"
-                ads:adUnitId="ca-app-pub-3026453700547032/4762497546" />
-
-        </androidx.cardview.widget.CardView>
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/watchAdBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerInParent="true"
-            android:backgroundTint="@color/white"
-            android:text="@string/watch_ad_to_unlock_all"
-            android:textColor="@color/black"
-            tools:targetApi="lollipop" />
-
+            android:layout_below="@+id/appBarLayout" />
 
     </RelativeLayout>
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

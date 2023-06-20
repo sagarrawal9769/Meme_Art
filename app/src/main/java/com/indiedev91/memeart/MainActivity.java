@@ -2,6 +2,8 @@ package com.indiedev91.memeart;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Build;
@@ -9,27 +11,40 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
+import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
+import androidx.viewpager2.widget.ViewPager2;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+import com.google.android.play.core.appupdate.AppUpdateInfo;
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
+import com.google.android.play.core.install.InstallStateUpdatedListener;
+import com.google.android.play.core.install.model.AppUpdateType;
+import com.google.android.play.core.install.model.InstallStatus;
+import com.google.android.play.core.install.model.UpdateAvailability;
+import com.google.android.play.core.tasks.OnSuccessListener;
+import com.indiedev91.memeart.Adapter.FragmentViewPagerAdapter;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "YOUR-TAG-NAME";
-    List<String> asciiArts = new ArrayList<>();
+    private static final int requestCodeVar = 100;
+    private final InstallStateUpdatedListener installStateUpdatedListener = installState -> {
+        if (installState.installStatus() == InstallStatus.DOWNLOADED) {
+
+            showSuccsToats();
+        }
+    };
     SharedPreferences prefs;
     boolean isFirstLaunch;
-
-    private RecyclerView recyclerView;
-    private MemeAdapter adapter;
+    private AppUpdateManager appUpdateManager;
+    TabLayout tabLayout;
+    ViewPager2 viewPager;
+    FragmentViewPagerAdapter viewPagerAdapter;
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
@@ -42,8 +57,47 @@ public class MainActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 window.setStatusBarColor(this.getResources().getColor(R.color.black));
             }
+            //Init Var views
+            tabLayout = findViewById(R.id.tabLayout);
+            viewPager = findViewById(R.id.viewPager);
 
+            //Setting FragmentManager
 
+             viewPagerAdapter = new FragmentViewPagerAdapter(getSupportFragmentManager(),getLifecycle());
+            viewPager.setAdapter(viewPagerAdapter);
+            new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
+                // Set the tab titles using switch-case
+                switch (position) {
+                    case 0:
+                        tab.setText("Meme");
+                        break;
+                    case 1:
+                        tab.setText("Art");
+                        break;
+                    case 2:
+                        tab.setText("NSFW");
+                        break;
+                    case 3:
+                        tab.setText("Settings");
+                        break;
+                }
+            }).attach();
+
+            appUpdateManager = AppUpdateManagerFactory.create(this);
+            appUpdateManager.getAppUpdateInfo().addOnSuccessListener(new OnSuccessListener<AppUpdateInfo>() {
+                @Override
+                public void onSuccess(AppUpdateInfo appUpdateInfo) {
+                    if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
+
+                        try {
+                            appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, MainActivity.this,
+                                    requestCodeVar);
+                        } catch (IntentSender.SendIntentException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
             prefs = getSharedPreferences("MyPrefs", MODE_PRIVATE);
             isFirstLaunch = prefs.getBoolean("is_first_launch", true);
             if (isFirstLaunch) {
@@ -67,33 +121,45 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        initAsciiArts();
-        recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setNestedScrollingEnabled(false);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
 
-        try {
-            MemeAdapter adapter = new MemeAdapter(asciiArts, this, recyclerView, this);
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setAdapter(adapter);
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Handle the exception here
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
+        if (requestCode == requestCodeVar && resultCode != RESULT_OK) {
+            Toast.makeText(this, "Update Cancled", Toast.LENGTH_SHORT).show();
         }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
 
-        MobileAds.initialize(this, initializationStatus -> {
+    @Override
+    protected void onResume() {
+
+        super.onResume();
+        appUpdateManager.getAppUpdateInfo().addOnSuccessListener(new OnSuccessListener<AppUpdateInfo>() {
+            @Override
+            public void onSuccess(AppUpdateInfo appUpdateInfo) {
+                if (appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+
+                    try {
+                        appUpdateManager.startUpdateFlowForResult(appUpdateInfo, AppUpdateType.IMMEDIATE, MainActivity.this,
+                                requestCodeVar);
+                    } catch (IntentSender.SendIntentException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
         });
 
-        AdView mAdView = findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder().build();
+    }
 
-        try {
-            mAdView.loadAd(adRequest);
-        } catch (Exception e) {
-            e.printStackTrace();
-            // Handle the exception here
-        }
+    private void showSuccsToats() {
+
+        Toast.makeText(this, "Update Installed", Toast.LENGTH_SHORT).show();
     }
 
     public void showInfoCard(View view) {
@@ -107,35 +173,5 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    private void initAsciiArts() {
-        try {
-            asciiArts.addAll(Arrays.asList(
-                    getResources().getString(R.string.troll_face1),
-                    getResources().getString(R.string.troll_face3),
-                    getResources().getString(R.string.troll_face4),
-                    getResources().getString(R.string.troll_face_redeyes),
-                    getResources().getString(R.string.trollFace6),
-                    getResources().getString(R.string.trollFace7),
-                    getResources().getString(R.string.nyan_cat),
-                    getResources().getString(R.string.mrIncredible),
-                    getResources().getString(R.string.mrIncredible2),
-                    getResources().getString(R.string.wegogym),
-                    getResources().getString(R.string.Awkward_Look_Monkey_Puppet),
-                    getResources().getString(R.string.Ghostface),
-                    getResources().getString(R.string.ussrFlag),
-                    getResources().getString(R.string.apeMonkey),
-                    getResources().getString(R.string.cat),
-                    getResources().getString(R.string.cat2),
-                    getResources().getString(R.string.discordLogo),
-                    getResources().getString(R.string.onepunchMan),
-                    getResources().getString(R.string.XD),
-                    getResources().getString(R.string.putin),
-                    getResources().getString(R.string.Jigsaw),
-                    getResources().getString(R.string.icanseeyou),
-                    getResources().getString(R.string.GG)
-            ));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
 }
