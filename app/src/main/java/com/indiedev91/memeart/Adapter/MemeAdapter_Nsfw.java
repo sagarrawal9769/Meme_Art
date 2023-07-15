@@ -145,7 +145,7 @@ public class MemeAdapter_Nsfw extends RecyclerView.Adapter<MemeAdapter_Nsfw.Meme
         public void intertitalAd(Context context) {
             try {
                 AdRequest adRequest = new AdRequest.Builder().build();
-                InterstitialAd.load(context, "ca-app-pub-3026453700547032/6570403239", adRequest,
+                InterstitialAd.load(context, "ca-app-pub-3026453700547032/2198519126", adRequest,
                         new InterstitialAdLoadCallback() {
                             @Override
                             public void onAdLoaded(@NotNull InterstitialAd interstitialAd) {
@@ -219,7 +219,7 @@ public class MemeAdapter_Nsfw extends RecyclerView.Adapter<MemeAdapter_Nsfw.Meme
                     Toast.makeText(context, "Loading Ad.....", Toast.LENGTH_LONG).show();
                     // Use the test ad unit ID to load an ad.
                     AdRequest adRequest = new AdRequest.Builder().build();
-                    RewardedAd.load(context, "ca-app-pub-3026453700547032/2874700808",
+                    RewardedAd.load(context, "ca-app-pub-3026453700547032/9403373106",
                             adRequest, new RewardedAdLoadCallback() {
                                 @Override
                                 public void onAdFailedToLoad(@NotNull LoadAdError loadAdError) {
