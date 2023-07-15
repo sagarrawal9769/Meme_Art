@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.viewpager2.widget.ViewPager2;
@@ -25,11 +24,10 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
 import com.google.android.play.core.appupdate.AppUpdateManager;
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
-import com.google.android.play.core.install.InstallStateUpdatedListener;
 import com.google.android.play.core.install.model.AppUpdateType;
-import com.google.android.play.core.install.model.InstallStatus;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.android.play.core.tasks.OnSuccessListener;
+import com.google.firebase.database.annotations.Nullable;
 import com.indiedev91.memeart.Adapter.FragmentViewPagerAdapter;
 import com.indiedev91.memeart.Fragment.ArtFragment;
 import com.indiedev91.memeart.Fragment.MemeFragment;
@@ -37,13 +35,9 @@ import com.indiedev91.memeart.Fragment.NsfwFragment;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "YOUR-TAG-NAME";
+    private static final String SHARED_PREFS_NAME_NSFW = "nsfw_toggle";
+    private static final String REWARD_GRANTED_KEY = "nsfw_toggle_key";
     private static final int requestCodeVar = 100;
-    private final InstallStateUpdatedListener installStateUpdatedListener = installState -> {
-        if (installState.installStatus() == InstallStatus.DOWNLOADED) {
-
-            showSuccsToats();
-        }
-    };
     SharedPreferences prefs;
     boolean isFirstLaunch;
     TabLayout tabLayout;
@@ -62,14 +56,17 @@ public class MainActivity extends AppCompatActivity {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 window.setStatusBarColor(this.getResources().getColor(R.color.black));
             }
-//            adReplacementView();
+
+
             //Init Var views
             tabLayout = findViewById(R.id.tabLayout);
             viewPager = findViewById(R.id.viewPager);
 
-            //Setting FragmentManager
 
-            viewPagerAdapter = new FragmentViewPagerAdapter(getSupportFragmentManager(), getLifecycle());
+            SharedPreferences mSharedPrefs_nsfw_settings = getSharedPreferences(SHARED_PREFS_NAME_NSFW, Context.MODE_PRIVATE);
+            boolean rewardGranted = mSharedPrefs_nsfw_settings.getBoolean(REWARD_GRANTED_KEY, false);
+
+            viewPagerAdapter = new FragmentViewPagerAdapter(getSupportFragmentManager(), getLifecycle(), rewardGranted);
             viewPager.setAdapter(viewPagerAdapter);
             new TabLayoutMediator(tabLayout, viewPager, (tab, position) -> {
                 // Set the tab titles using switch-case
@@ -81,7 +78,11 @@ public class MainActivity extends AppCompatActivity {
                         tab.setText("Art");
                         break;
                     case 2:
-                        tab.setText("NSFW");
+                        if (rewardGranted) {
+                            tab.setText("NSFW (18+)");
+                        } else {
+                            tab.setText("Settings");
+                        }
                         break;
                     case 3:
                         tab.setText("Settings");
@@ -129,6 +130,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
         if (requestCode == requestCodeVar && resultCode != RESULT_OK) {
@@ -146,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
 
         super.onResume();
+
         appUpdateManager.getAppUpdateInfo().addOnSuccessListener(new OnSuccessListener<AppUpdateInfo>() {
             @Override
             public void onSuccess(AppUpdateInfo appUpdateInfo) {
@@ -163,10 +166,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void showSuccsToats() {
-
-        Toast.makeText(this, "Update Installed", Toast.LENGTH_SHORT).show();
-    }
 
     public void showInfoCard(View view) {
         LayoutInflater inflater = LayoutInflater.from(this);
@@ -179,74 +178,5 @@ public class MainActivity extends AppCompatActivity {
                 .show();
     }
 
-    public void adReplacementView() {
-        //INIT
-        ViewPager2 viewPager = findViewById(R.id.viewPager);
-        String SHARED_PREFS_NAME_Art, SHARED_PREFS_NAME_Meme, SHARED_PREFS_NAME_Nsfw;
-        String REWARD_GRANTED_KEY_Art = null, REWARD_GRANTED_KEY_Meme = null, REWARD_GRANTED_KEY_Nsfw = null;
-        SharedPreferences mSharedPrefs_art, mSharedPrefs_meme, mSharedPrefs_nsfw;
-        MaterialButton adBtn_art, adBtn_meme, adBtn_nsfw;
-        CardView adSpace_art, adSpace_meme, adSpace_nsfw;
-
-        //INITIALIZE
-        SHARED_PREFS_NAME_Art = "my_shared_prefs_art";
-        SHARED_PREFS_NAME_Meme = "my_shared_prefs_meme";
-        SHARED_PREFS_NAME_Nsfw = "my_shared_prefs_nsfw";
-
-        REWARD_GRANTED_KEY_Art = "reward_granted_art";
-        REWARD_GRANTED_KEY_Meme = "reward_granted_meme";
-        REWARD_GRANTED_KEY_Nsfw = "reward_granted_nsfw";
-
-        FragmentViewPagerAdapter adapter = (FragmentViewPagerAdapter) viewPager.getAdapter();
-
-        mSharedPrefs_art = this.getSharedPreferences(SHARED_PREFS_NAME_Art, Context.MODE_PRIVATE);
-        mSharedPrefs_meme = this.getSharedPreferences(SHARED_PREFS_NAME_Meme, Context.MODE_PRIVATE);
-        mSharedPrefs_nsfw = this.getSharedPreferences(SHARED_PREFS_NAME_Nsfw, Context.MODE_PRIVATE);
-
-        if (adapter != null) {
-            ArtFragment fragment_art = (ArtFragment) adapter.getFragment(1);
-            MemeFragment fragment_meme = (MemeFragment) adapter.getFragment(0);
-            NsfwFragment fragment_nsfw = (NsfwFragment) adapter.getFragment(2);
-            if (fragment_art != null) {
-                adBtn_art = fragment_art.getButton_Art();
-                adSpace_art = fragment_art.getCardView_Art();
-
-                if (mSharedPrefs_art.getBoolean(REWARD_GRANTED_KEY_Art, false)) {
-                    adBtn_art.setVisibility(View.GONE);
-                    adSpace_art.setVisibility(View.VISIBLE);
-                } else {
-                    adBtn_art.setVisibility(View.VISIBLE);
-                    adSpace_art.setVisibility(View.GONE);
-                }
-            }
-            if (fragment_meme != null) {
-                adBtn_meme = fragment_meme.getButton_Meme();
-                adSpace_meme = fragment_meme.getCardView_Meme();
-
-                if (mSharedPrefs_meme.getBoolean(REWARD_GRANTED_KEY_Meme, false)) {
-                    adBtn_meme.setVisibility(View.GONE);
-                    adSpace_meme.setVisibility(View.VISIBLE);
-                } else {
-                    adBtn_meme.setVisibility(View.VISIBLE);
-                    adSpace_meme.setVisibility(View.GONE);
-                }
-            }
-            if (fragment_nsfw != null) {
-                adBtn_nsfw = fragment_nsfw.getButton_Nsfw();
-                adSpace_nsfw = fragment_nsfw.getCardView_Nsfw();
-
-                if (mSharedPrefs_nsfw.getBoolean(REWARD_GRANTED_KEY_Nsfw, false)) {
-                    adBtn_nsfw.setVisibility(View.GONE);
-                    adSpace_nsfw.setVisibility(View.VISIBLE);
-                } else {
-                    adBtn_nsfw.setVisibility(View.VISIBLE);
-                    adSpace_nsfw.setVisibility(View.GONE);
-                }
-            }
-
-        }
-
-
-    }
 
 }

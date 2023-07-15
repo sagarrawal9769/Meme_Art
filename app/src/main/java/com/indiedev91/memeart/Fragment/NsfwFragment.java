@@ -40,13 +40,13 @@ public class NsfwFragment extends Fragment {
 
 
         initAsciiArts_Nsfw();
-        RecyclerView recyclerView = view.findViewById(R.id.recycler_view);
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_view_nsfw);
         recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        adBtn = view.findViewById(R.id.watchAdBtn);
-        adSpace = view.findViewById(R.id.adSpace);
+        adBtn = view.findViewById(R.id.watchAdBtn_nsfw);
+        adSpace = view.findViewById(R.id.adSpace_nsfw);
 // Initialize SharedPreferences and register the listener
-        mSharedPrefs = getActivity().getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
+        mSharedPrefs = requireActivity().getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         sharedPrefsListener_nsfw = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
@@ -62,7 +62,7 @@ public class NsfwFragment extends Fragment {
         boolean rewardGranted = mSharedPrefs.getBoolean(REWARD_GRANTED_KEY, false);
         updateAdVisibility(rewardGranted);
         try {
-            MemeAdapter_Nsfw adapter = new MemeAdapter_Nsfw(asciiArts, requireContext(), recyclerView, this);
+            MemeAdapter_Nsfw adapter = new MemeAdapter_Nsfw(asciiArts, requireContext(), this);
             recyclerView.setHasFixedSize(true);
             recyclerView.setAdapter(adapter);
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public class NsfwFragment extends Fragment {
         MobileAds.initialize(requireContext(), initializationStatus -> {
         });
 
-        AdView mAdView = view.findViewById(R.id.adView);
+        AdView mAdView = view.findViewById(R.id.adView_nsfw);
         AdRequest adRequest = new AdRequest.Builder().build();
 
         try {
@@ -112,8 +112,9 @@ public class NsfwFragment extends Fragment {
     private void initAsciiArts_Nsfw() {
         try {
             asciiArts.addAll(Arrays.asList(
-                    getResources().getString(R.string.ANY_LOSERS),
                     getResources().getString(R.string.anyLoser2),
+                    getResources().getString(R.string.ANY_LOSERS),
+                    getResources().getString(R.string.among_us2),
                     getResources().getString(R.string.cock)
 
 

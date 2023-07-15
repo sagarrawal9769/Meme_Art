@@ -1,6 +1,8 @@
 package com.indiedev91.memeart.Adapter;
 
-import androidx.annotation.NonNull;
+import android.content.Context;
+import android.content.SharedPreferences;
+
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
@@ -10,22 +12,33 @@ import com.indiedev91.memeart.Fragment.ArtFragment;
 import com.indiedev91.memeart.Fragment.MemeFragment;
 import com.indiedev91.memeart.Fragment.NsfwFragment;
 import com.indiedev91.memeart.Fragment.SettingsFragment;
+import com.indiedev91.memeart.MainActivity;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class FragmentViewPagerAdapter extends FragmentStateAdapter {
-    private final List<Fragment> fragmentList = new ArrayList<>();
 
-    public FragmentViewPagerAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
+    private final List<Fragment> fragmentList = new ArrayList<>();
+    SharedPreferences sharedPreferences;
+    MainActivity mainActivity = new MainActivity();
+    Context context = mainActivity;
+
+    public FragmentViewPagerAdapter(@NotNull FragmentManager fragmentManager, @NotNull Lifecycle lifecycle, boolean rewardGranted) {
         super(fragmentManager, lifecycle);
+
         fragmentList.add(new MemeFragment());
         fragmentList.add(new ArtFragment());
-        fragmentList.add(new NsfwFragment());
+        if (rewardGranted) {
+            fragmentList.add(new NsfwFragment());
+        }
         fragmentList.add(new SettingsFragment());
     }
 
-    @NonNull
+
+    @NotNull
     @Override
     public Fragment createFragment(int position) {
         return fragmentList.get(position);
@@ -39,8 +52,11 @@ public class FragmentViewPagerAdapter extends FragmentStateAdapter {
     public int getItemCount() {
         return fragmentList.size();
     }
+
     public Fragment getFragment(int position) {
         // Retrieve the fragment at the specified position
         return fragmentList.get(position);
     }
+
+
 }

@@ -10,7 +10,7 @@
         android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view"
+            android:id="@+id/recycler_view_nsfw"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@+id/adSpace"
@@ -19,7 +19,7 @@
 
 
         <androidx.cardview.widget.CardView
-            android:id="@+id/adSpace"
+            android:id="@+id/adSpace_nsfw"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -37,7 +37,7 @@
                 android:textSize="20sp" />
 
             <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/adView"
+                android:id="@+id/adView_nsfw"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -47,13 +47,13 @@
         </androidx.cardview.widget.CardView>
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/watchAdBtn"
+            android:id="@+id/watchAdBtn_nsfw"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerInParent="true"
             android:backgroundTint="@color/white"
-            android:text="@string/watch_ad_to_unlock_all"
+            android:text="@string/unlock_all_nsfw"
             android:textColor="@color/black"
             tools:targetApi="lollipop" />
 

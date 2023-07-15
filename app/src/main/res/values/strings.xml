@@ -550,6 +550,12 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="todo">TODO</string>
+    <string name="settings_amp_about">Settings &amp; Info</string>
+    <string name="contact">Contact</string>
+    <string name="unlock_all_art">Unlock all art</string>
+    <string name="unlock_all_nsfw">unlock all nsfw</string>
+    <string name="unlock_all_meme">Unlock all meme</string>
+    <string name="please_be_aware_that_enabling_the_nsfw_not_safe_for_work_filter_will_display_content_that_is_intended_for_individuals_who_are_18_years_or_older_and_by_doing_so_you_are_confirming_that_you_are_of_legal_age_18">* Caution!, Please be aware that enabling the NSFW (Not Safe for Work) Filter will display content that is intended for individuals who are 18 years or older, and by doing so, you are confirming that you are of legal age (18+).</string>
 
 
 </resources>

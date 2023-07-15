@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1079393134716",
+    "project_id": "asciiart-4a777",
+    "storage_bucket": "asciiart-4a777.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1079393134716:android:532188c5934c2676e881f9",
+        "android_client_info": {
+          "package_name": "com.indiedev91.memeart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1079393134716-6o8q2cliol8e86agacsp09m9js0qdm9r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbkDGROblgXDFr94bNTt1mrOStviW3_Rk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1079393134716-6o8q2cliol8e86agacsp09m9js0qdm9r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
