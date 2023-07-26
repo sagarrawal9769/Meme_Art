@@ -15,10 +15,8 @@ import android.view.Window;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
 import androidx.viewpager2.widget.ViewPager2;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.google.android.play.core.appupdate.AppUpdateInfo;
@@ -27,11 +25,14 @@ import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
 import com.google.android.play.core.install.model.AppUpdateType;
 import com.google.android.play.core.install.model.UpdateAvailability;
 import com.google.android.play.core.tasks.OnSuccessListener;
+import com.google.android.ump.ConsentDebugSettings;
+import com.google.android.ump.ConsentForm;
+import com.google.android.ump.ConsentInformation;
+import com.google.android.ump.ConsentRequestParameters;
+import com.google.android.ump.FormError;
+import com.google.android.ump.UserMessagingPlatform;
 import com.google.firebase.database.annotations.Nullable;
 import com.indiedev91.memeart.Adapter.FragmentViewPagerAdapter;
-import com.indiedev91.memeart.Fragment.ArtFragment;
-import com.indiedev91.memeart.Fragment.MemeFragment;
-import com.indiedev91.memeart.Fragment.NsfwFragment;
 
 public class MainActivity extends AppCompatActivity {
     public static final String TAG = "YOUR-TAG-NAME";
@@ -44,12 +45,30 @@ public class MainActivity extends AppCompatActivity {
     ViewPager2 viewPager;
     FragmentViewPagerAdapter viewPagerAdapter;
     private AppUpdateManager appUpdateManager;
+    private ConsentInformation consentInformation;
+    private ConsentForm consentForm;
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Init Var views
+        tabLayout = findViewById(R.id.tabLayout);
+        viewPager = findViewById(R.id.viewPager);
+
+//        ConsentDebugSettings debugSettings = new ConsentDebugSettings.Builder(this)
+//                .setDebugGeography(ConsentDebugSettings.DebugGeography.DEBUG_GEOGRAPHY_EEA)
+//                .addTestDeviceHashedId("3C4F2AB0B239BFFD6D11C116EC7E2CB6")
+//                .build();
+// Set tag for under age of consent. false means users are not under
+        // age.
+
+        ConsentRequestParameters params = new ConsentRequestParameters
+                .Builder()
+                .setTagForUnderAgeOfConsent(false)
+                .build();
+
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); // Set vertical orientation
         try {
             Window window = this.getWindow();
@@ -58,9 +77,28 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-            //Init Var views
-            tabLayout = findViewById(R.id.tabLayout);
-            viewPager = findViewById(R.id.viewPager);
+            consentInformation = UserMessagingPlatform.getConsentInformation(this);
+            consentInformation.requestConsentInfoUpdate(
+                    this,
+                    params,
+                    new ConsentInformation.OnConsentInfoUpdateSuccessListener() {
+                        @Override
+                        public void onConsentInfoUpdateSuccess() {
+                            // The consent information state was updated.
+                            // You are now ready to check if a form is available.
+                            if (consentInformation.isConsentFormAvailable()) {
+
+                                loadForm();
+                            }
+                        }
+                    },
+                    new ConsentInformation.OnConsentInfoUpdateFailureListener() {
+                        @Override
+                        public void onConsentInfoUpdateFailure(FormError formError) {
+                            // Handle the error.
+                        }
+                    });
+
 
 
             SharedPreferences mSharedPrefs_nsfw_settings = getSharedPreferences(SHARED_PREFS_NAME_NSFW, Context.MODE_PRIVATE);
@@ -130,6 +168,40 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public void loadForm() {
+        // Loads a consent form. Must be called on the main thread.
+        UserMessagingPlatform.loadConsentForm(
+                this,
+                new UserMessagingPlatform.OnConsentFormLoadSuccessListener() {
+                    @Override
+                    public void onConsentFormLoadSuccess(ConsentForm consentForm) {
+                        MainActivity.this.consentForm = consentForm;
+                        if (consentInformation.getConsentStatus() == ConsentInformation.ConsentStatus.REQUIRED) {
+                            consentForm.show(
+                                    MainActivity.this,
+                                    new ConsentForm.OnConsentFormDismissedListener() {
+                                        @Override
+                                        public void onConsentFormDismissed(@Nullable FormError formError) {
+                                            if (consentInformation.getConsentStatus() == ConsentInformation.ConsentStatus.OBTAINED) {
+                                                // App can start requesting ads.
+
+                                            }
+
+                                            // Handle dismissal by reloading form.
+                                            loadForm();
+                                        }
+                                    });
+                        }
+                    }
+                },
+                new UserMessagingPlatform.OnConsentFormLoadFailureListener() {
+                    @Override
+                    public void onConsentFormLoadFailure(FormError formError) {
+                        // Handle Error.
+                    }
+                }
+        );
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {
