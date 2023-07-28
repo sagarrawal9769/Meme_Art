@@ -64,10 +64,10 @@ public class MainActivity extends AppCompatActivity {
 // Set tag for under age of consent. false means users are not under
         // age.
 
-        ConsentRequestParameters params = new ConsentRequestParameters
-                .Builder()
-                .setTagForUnderAgeOfConsent(false)
-                .build();
+//        ConsentRequestParameters params = new ConsentRequestParameters
+//                .Builder()
+//                .setTagForUnderAgeOfConsent(false)
+//                .build();
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT); // Set vertical orientation
         try {
@@ -77,27 +77,27 @@ public class MainActivity extends AppCompatActivity {
             }
 
 
-            consentInformation = UserMessagingPlatform.getConsentInformation(this);
-            consentInformation.requestConsentInfoUpdate(
-                    this,
-                    params,
-                    new ConsentInformation.OnConsentInfoUpdateSuccessListener() {
-                        @Override
-                        public void onConsentInfoUpdateSuccess() {
-                            // The consent information state was updated.
-                            // You are now ready to check if a form is available.
-                            if (consentInformation.isConsentFormAvailable()) {
-
-                                loadForm();
-                            }
-                        }
-                    },
-                    new ConsentInformation.OnConsentInfoUpdateFailureListener() {
-                        @Override
-                        public void onConsentInfoUpdateFailure(FormError formError) {
-                            // Handle the error.
-                        }
-                    });
+//            consentInformation = UserMessagingPlatform.getConsentInformation(this);
+//            consentInformation.requestConsentInfoUpdate(
+//                    this,
+//                    params,
+//                    new ConsentInformation.OnConsentInfoUpdateSuccessListener() {
+//                        @Override
+//                        public void onConsentInfoUpdateSuccess() {
+//                            // The consent information state was updated.
+//                            // You are now ready to check if a form is available.
+//                            if (consentInformation.isConsentFormAvailable()) {
+//
+//                                loadForm();
+//                            }
+//                        }
+//                    },
+//                    new ConsentInformation.OnConsentInfoUpdateFailureListener() {
+//                        @Override
+//                        public void onConsentInfoUpdateFailure(FormError formError) {
+//                            // Handle the error.
+//                        }
+//                    });
 
 
 
@@ -168,40 +168,40 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void loadForm() {
-        // Loads a consent form. Must be called on the main thread.
-        UserMessagingPlatform.loadConsentForm(
-                this,
-                new UserMessagingPlatform.OnConsentFormLoadSuccessListener() {
-                    @Override
-                    public void onConsentFormLoadSuccess(ConsentForm consentForm) {
-                        MainActivity.this.consentForm = consentForm;
-                        if (consentInformation.getConsentStatus() == ConsentInformation.ConsentStatus.REQUIRED) {
-                            consentForm.show(
-                                    MainActivity.this,
-                                    new ConsentForm.OnConsentFormDismissedListener() {
-                                        @Override
-                                        public void onConsentFormDismissed(@Nullable FormError formError) {
-                                            if (consentInformation.getConsentStatus() == ConsentInformation.ConsentStatus.OBTAINED) {
-                                                // App can start requesting ads.
-
-                                            }
-
-                                            // Handle dismissal by reloading form.
-                                            loadForm();
-                                        }
-                                    });
-                        }
-                    }
-                },
-                new UserMessagingPlatform.OnConsentFormLoadFailureListener() {
-                    @Override
-                    public void onConsentFormLoadFailure(FormError formError) {
-                        // Handle Error.
-                    }
-                }
-        );
-    }
+//    public void loadForm() {
+//        // Loads a consent form. Must be called on the main thread.
+//        UserMessagingPlatform.loadConsentForm(
+//                this,
+//                new UserMessagingPlatform.OnConsentFormLoadSuccessListener() {
+//                    @Override
+//                    public void onConsentFormLoadSuccess(ConsentForm consentForm) {
+//                        MainActivity.this.consentForm = consentForm;
+//                        if (consentInformation.getConsentStatus() == ConsentInformation.ConsentStatus.REQUIRED) {
+//                            consentForm.show(
+//                                    MainActivity.this,
+//                                    new ConsentForm.OnConsentFormDismissedListener() {
+//                                        @Override
+//                                        public void onConsentFormDismissed(@Nullable FormError formError) {
+//                                            if (consentInformation.getConsentStatus() == ConsentInformation.ConsentStatus.OBTAINED) {
+//                                                // App can start requesting ads.
+//
+//                                            }
+//
+//                                            // Handle dismissal by reloading form.
+//                                            loadForm();
+//                                        }
+//                                    });
+//                        }
+//                    }
+//                },
+//                new UserMessagingPlatform.OnConsentFormLoadFailureListener() {
+//                    @Override
+//                    public void onConsentFormLoadFailure(FormError formError) {
+//                        // Handle Error.
+//                    }
+//                }
+//        );
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable @org.jetbrains.annotations.Nullable Intent data) {

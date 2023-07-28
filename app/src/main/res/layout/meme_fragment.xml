@@ -12,7 +12,7 @@
             android:id="@+id/recycler_view_meme"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/adSpace"
+            android:layout_above="@+id/adSpace_meme"
             android:layerType="hardware" />
 
 
