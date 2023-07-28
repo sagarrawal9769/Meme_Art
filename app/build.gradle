@@ -6,13 +6,20 @@ plugins {
 android {
     compileSdkVersion 32
     buildToolsVersion "31.0.0"
-
+    signingConfigs {
+        release {
+            storeFile file("D:\\Android Projects\\Troll Face - Ascii Meme\\Key Store Path\\Initial Release Keystore\\TrollFace_Keystore.jks")
+            storePassword "SagarRiya3173;"
+            keyAlias "trollface_alias"
+            keyPassword "SagarRiya3173;"
+        }
+    }
     defaultConfig {
         applicationId "com.indiedev91.memeart"
         minSdkVersion 19
         targetSdkVersion 32
-        versionCode 4
-        versionName "2023.1.0.3"
+        versionCode 5
+        versionName "2023.1.0.4"
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

@@ -13,7 +13,7 @@
             android:id="@+id/recycler_view_nsfw"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/adSpace"
+            android:layout_above="@+id/adSpace_nsfw"
             android:layerType="hardware" />
 
 
